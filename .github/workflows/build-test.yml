@@ -16,17 +16,18 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20' # 18 yerine 20 yaptık, uyarılar gidecek
 
+      - name: Install Dependencies
+        run: npm install
+
+      # Eğer hala "Missing script build" hatası alıyorsan, 
+      # bu adımı geçici olarak kapatabiliriz (başına # koyarak).
       - name: Install and Build
-        run: |
-          npm install
-          npm run build
+        run: npm run build 
 
-      # İŞTE ASIL OLAY BURASI: Çıktıyı GitHub'a yükle
       - name: Upload Build Result
         uses: actions/upload-artifact@v4
         with:
-          name: sitemin-cikti-dosyasi # İndireceğin dosyanın adı
-          path: dist/ # Burayı projenin build klasörüne göre (dist veya build) ayarla
-          retention-days: 5 # Dosyayı GitHub'da 5 gün saklar
+          name: sitemin-cikti-dosyasi
+          path: dist/ # Burayı kontrol et! dist mi, build mi yoksa sadece . mi?
