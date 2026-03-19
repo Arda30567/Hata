@@ -1,4 +1,4 @@
-name: Build and Package Only
+name: React Native Web Build Test
 
 on:
   push:
@@ -16,18 +16,25 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # 18 yerine 20 yaptık, uyarılar gidecek
+          node-version: '20'
+          cache: 'npm' # Hızlandırmak için cache ekledik
 
       - name: Install Dependencies
         run: npm install
 
-      # Eğer hala "Missing script build" hatası alıyorsan, 
-      # bu adımı geçici olarak kapatabiliriz (başına # koyarak).
-      - name: Install and Build
-        run: npm run build 
+      # Eğer Expo kullanıyorsan expo-cli gerekebilir
+      - name: Setup Expo
+        if: contains(github.event.head_commit.message, 'expo')
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
 
-      - name: Upload Build Result
+      - name: Build Web Project
+        run: npm run build # package.json'a eklediğimiz komut çalışacak
+
+      - name: Upload Web Build Result
         uses: actions/upload-artifact@v4
         with:
-          name: sitemin-cikti-dosyasi
-          path: dist/ # Burayı kontrol et! dist mi, build mi yoksa sadece . mi?
+          name: web-cikti-dosyalari
+          # Expo web genelde 'web-build' veya 'dist' klasörüne çıktı verir
+          path: web-build/ 
